@@ -97,7 +97,7 @@ export default function ImageEditor() {
   };
 
   return (
-    <div>
+    <div className="w-96 border-2 rounded-xl p-2">
       <input type="file" accept="image/*" onChange={handleImageUpload} />
       <div style={{ position: "relative" }}>
         <canvas ref={canvasRef} onMouseDown={handleMouseDown} />
