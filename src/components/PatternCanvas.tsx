@@ -5,6 +5,7 @@ export default function ImageEditor() {
   const [scale, setScale] = useState(1);
   const [angle, setAngle] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [dataURL, setDataURL] = useState("");
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -42,6 +43,10 @@ export default function ImageEditor() {
       context.restore();
       context.restore();
     };
+
+    const dataURL = canvas.toDataURL();
+    setDataURL(dataURL);
+    console.log(dataURL);
   }, [image, scale, angle, offset]);
 
   useEffect(() => {
@@ -97,32 +102,45 @@ export default function ImageEditor() {
   };
 
   return (
-    <div className="w-96 border-2 rounded-xl p-2">
-      <input type="file" accept="image/*" onChange={handleImageUpload} />
-      <div style={{ position: "relative" }}>
-        <canvas ref={canvasRef} onMouseDown={handleMouseDown} />
-      </div>
-      <div>
-        <label for="scale">Scale:</label>
+    <div
+      id="background"
+      className="w-full h-full flex justify-center items-center"
+      style={{ "--bg-image": `url('${dataURL}')` }}
+    >
+      <div className="w-96 border-2 rounded-xl p-2 bg-white">
         <input
-          id="scale"
-          type="range"
-          min="0.1"
-          max="2"
-          step="0.1"
-          value={scale}
-          onChange={handleScaleChange}
+          className=""
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
         />
-        <label for="rotate">Rotate:</label>
-        <input
-          id="rotate"
-          type="range"
-          min="0"
-          max="360"
-          step="1"
-          value={angle}
-          onChange={handleRotate}
-        />
+        <div style={{ position: "relative" }}>
+          <canvas
+            className="w-full"
+            ref={canvasRef}
+            onMouseDown={handleMouseDown}
+          />
+        </div>
+        <div className="p-2 flex flex-col gap-2">
+          <input
+            id="scale"
+            type="range"
+            min="0.1"
+            max="2"
+            step="0.1"
+            value={scale}
+            onChange={handleScaleChange}
+          />
+          <input
+            id="rotate"
+            type="range"
+            min="0"
+            max="360"
+            step="1"
+            value={angle}
+            onChange={handleRotate}
+          />
+        </div>
       </div>
     </div>
   );
