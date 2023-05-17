@@ -127,9 +127,9 @@ export default function ImageEditor() {
             type="range"
             min="0.1"
             max="2"
-            step="0.1"
+            step="0.01"
             value={scale}
-            onChange={handleScaleChange}
+            onInput={handleScaleChange}
           />
           <input
             id="rotate"
@@ -138,7 +138,7 @@ export default function ImageEditor() {
             max="360"
             step="1"
             value={angle}
-            onChange={handleRotate}
+            onInput={handleRotate}
           />
         </div>
       </div>
