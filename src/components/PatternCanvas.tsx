@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
+import RotaryDial from "./RotaryDial";
 
 export default function ImageEditor() {
   const [image, setImage] = useState<string | null>(null);
@@ -107,7 +108,7 @@ export default function ImageEditor() {
       className="w-full h-full flex justify-center items-center"
       style={{ "--bg-image": `url('${dataURL}')` }}
     >
-      <div className="w-96 border-2 rounded-xl p-2 bg-white">
+      <div className="w-96  rounded-xl p-2 bg-white shadow-md">
         <input
           className=""
           type="file"
@@ -122,6 +123,7 @@ export default function ImageEditor() {
           />
         </div>
         <div className="p-2 flex flex-col gap-2">
+          <RotaryDial value={angle} onChange={(value) => setAngle(value)} />
           <input
             id="scale"
             type="range"
@@ -130,15 +132,6 @@ export default function ImageEditor() {
             step="0.01"
             value={scale}
             onInput={handleScaleChange}
-          />
-          <input
-            id="rotate"
-            type="range"
-            min="0"
-            max="360"
-            step="1"
-            value={angle}
-            onInput={handleRotate}
           />
         </div>
       </div>
