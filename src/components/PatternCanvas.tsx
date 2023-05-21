@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import RotaryDial from "./RotaryDial";
 import Slider from "./Slider";
 
 export default function ImageEditor() {
@@ -24,6 +23,15 @@ export default function ImageEditor() {
     if (!canvas || !image) return;
     const context = canvas.getContext("2d");
     if (!context) return;
+
+    const size = 100 * scale;
+
+    const buffer = document.createElement("canvas");
+    buffer.width = size;
+    buffer.height = size;
+    const bufferContext = buffer.getContext("2d");
+    if (!bufferContext) return;
+
     const img = new Image();
     img.src = image;
     img.onload = () => {
@@ -34,21 +42,23 @@ export default function ImageEditor() {
       const canvasHeight = canvas.offsetHeight;
       const center = { x: canvasWidth / 2, y: canvasHeight / 2 };
 
-      context.fillStyle = "white";
-      context.fillRect(0, 0, canvasWidth, canvasHeight);
-      context.save();
-      context.translate(offset.x, offset.y);
-      context.save();
-      context.rotate((angle * Math.PI) / 180);
-      context.scale(scale, scale);
+      // context.fillStyle = "white";
+      // context.fillRect(0, 0, canvasWidth, canvasHeight);
+      // context.save();
+      // context.translate(offset.x, offset.y);
+      // context.save();
+      // context.rotate((angle * Math.PI) / 180);
+      // context.scale(scale, scale);
       context.drawImage(img, 0, 0);
-      context.restore();
-      context.restore();
+      // context.fillRect(offset.x, offset.y, 100, 100);
+      // context.restore();
+      // context.restore();
     };
+    bufferContext.rotate((angle * Math.PI) / 180);
+    bufferContext.drawImage(canvas, offset.x, offset.y, size, size);
 
-    const dataURL = canvas.toDataURL();
+    const dataURL = buffer.toDataURL();
     setDataURL(dataURL);
-    console.log(dataURL);
   }, [image, scale, angle, offset]);
 
   useEffect(() => {
@@ -76,14 +86,6 @@ export default function ImageEditor() {
     loadImage(e.target.files[0]);
   };
 
-  const handleScaleChange = (e: any) => {
-    setScale(parseFloat(e.target.value));
-  };
-
-  const handleRotate = (e: any) => {
-    setAngle(parseFloat(e.target.value));
-  };
-
   const handleMouseDown = (e: MouseEvent) => {
     const { clientX, clientY } = e;
     const startX = clientX - offset.x;
@@ -93,6 +95,7 @@ export default function ImageEditor() {
       const { clientX, clientY } = e;
       const offsetX = clientX - startX;
       const offsetY = clientY - startY;
+
       setOffset({ x: offsetX, y: offsetY });
     };
     const handleMouseUp = () => {
@@ -107,7 +110,9 @@ export default function ImageEditor() {
     <div
       id="background"
       className="w-full h-full flex justify-center items-center"
-      style={{ "--bg-image": `url('${dataURL}')` }}
+      style={{
+        "--bg-image": `url('${dataURL}')`,
+      }}
     >
       <div className="w-96  rounded-xl p-2 bg-white shadow-md">
         <input
