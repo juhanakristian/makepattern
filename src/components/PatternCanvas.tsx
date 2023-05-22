@@ -35,27 +35,36 @@ export default function ImageEditor() {
     const img = new Image();
     img.src = image;
     img.onload = () => {
-      const imgWidth = img.width;
-      const imgHeight = img.height;
-
-      const canvasWidth = canvas.offsetWidth;
-      const canvasHeight = canvas.offsetHeight;
-      const center = { x: canvasWidth / 2, y: canvasHeight / 2 };
-
-      // context.fillStyle = "white";
-      // context.fillRect(0, 0, canvasWidth, canvasHeight);
-      // context.save();
-      // context.translate(offset.x, offset.y);
-      // context.save();
-      // context.rotate((angle * Math.PI) / 180);
-      // context.scale(scale, scale);
       context.drawImage(img, 0, 0);
-      // context.fillRect(offset.x, offset.y, 100, 100);
-      // context.restore();
-      // context.restore();
     };
-    bufferContext.rotate((angle * Math.PI) / 180);
-    bufferContext.drawImage(canvas, offset.x, offset.y, size, size);
+
+    // Calculate the center coordinates of the source image
+    const centerX = offset.x + size / 2;
+    const centerY = offset.y + size / 2;
+
+    const x1 = offset.x;
+    const y1 = offset.y;
+    const x2 = offset.x + size;
+    const y2 = offset.y + size;
+
+    // Rotate coordinates by angle around the center
+    const x1r = centerX + (x1 - centerX) * Math.cos((angle * Math.PI) / 180);
+    const y1r = centerY + (y1 - centerY) * Math.sin((angle * Math.PI) / 180);
+    const x2r = centerX + (x2 - centerX) * Math.cos((angle * Math.PI) / 180);
+    const y2r = centerY + (y2 - centerY) * Math.sin((angle * Math.PI) / 180);
+
+    bufferContext.beginPath();
+    bufferContext.moveTo(x1r, y1r);
+    bufferContext.lineTo(x2r, y1r);
+    bufferContext.lineTo(x2r, y2r);
+    bufferContext.lineTo(x1r, y2r);
+    bufferContext.closePath();
+    bufferContext.clip();
+
+    // Draw the rotated image to the buffer canvas
+    // bufferContext.translate(size / 2, size / 2);
+    // bufferContext.rotate((angle * Math.PI) / 180);
+    bufferContext.drawImage(canvas, 0, 0, size, size);
 
     const dataURL = buffer.toDataURL();
     setDataURL(dataURL);
