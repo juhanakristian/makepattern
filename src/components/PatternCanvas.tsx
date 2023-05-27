@@ -38,32 +38,57 @@ export default function ImageEditor() {
       context.drawImage(img, 0, 0);
     };
 
-    // Calculate the center coordinates of the source image
-    const centerX = offset.x + size / 2;
-    const centerY = offset.y + size / 2;
+    function rotatePointClockwise(
+      x: number,
+      y: number,
+      cx: number,
+      cy: number,
+      angleDegrees: number
+    ) {
+      // Convert the angle from degrees to radians
+      const angleRadians = angleDegrees * (Math.PI / 180);
 
+      // Translate the point to the origin
+      const translatedX = x - cx;
+      const translatedY = y - cy;
+
+      // Apply the rotation
+      const rotatedX =
+        translatedX * Math.cos(angleRadians) +
+        translatedY * Math.sin(angleRadians);
+      const rotatedY =
+        -translatedX * Math.sin(angleRadians) +
+        translatedY * Math.cos(angleRadians);
+
+      // Translate the point back to its original position
+      const finalX = rotatedX + cx;
+      const finalY = rotatedY + cy;
+
+      // Return the rotated coordinates as an object
+      return { x: finalX, y: finalY };
+    }
     const x1 = offset.x;
     const y1 = offset.y;
     const x2 = offset.x + size;
     const y2 = offset.y + size;
 
-    // Rotate coordinates by angle around the center
-    const x1r = centerX + (x1 - centerX) * Math.cos((angle * Math.PI) / 180);
-    const y1r = centerY + (y1 - centerY) * Math.sin((angle * Math.PI) / 180);
-    const x2r = centerX + (x2 - centerX) * Math.cos((angle * Math.PI) / 180);
-    const y2r = centerY + (y2 - centerY) * Math.sin((angle * Math.PI) / 180);
+    const centerX = (x1 + x2) / 2;
+    const centerY = (y1 + y2) / 2;
+
+    const p1 = rotatePointClockwise(x1, y1, centerX, centerY, angle);
+    const p2 = rotatePointClockwise(x2, y1, centerX, centerY, angle);
+    const p3 = rotatePointClockwise(x2, y2, centerX, centerY, angle);
+    const p4 = rotatePointClockwise(x1, y2, centerX, centerY, angle);
 
     bufferContext.beginPath();
-    bufferContext.moveTo(x1r, y1r);
-    bufferContext.lineTo(x2r, y1r);
-    bufferContext.lineTo(x2r, y2r);
-    bufferContext.lineTo(x1r, y2r);
+    bufferContext.moveTo(p1.x, p1.y);
+    bufferContext.lineTo(p2.x, p2.y);
+    bufferContext.lineTo(p3.x, p3.y);
+    bufferContext.lineTo(p4.x, p4.y);
     bufferContext.closePath();
+    bufferContext.stroke();
     bufferContext.clip();
 
-    // Draw the rotated image to the buffer canvas
-    // bufferContext.translate(size / 2, size / 2);
-    // bufferContext.rotate((angle * Math.PI) / 180);
     bufferContext.drawImage(canvas, 0, 0, size, size);
 
     const dataURL = buffer.toDataURL();
