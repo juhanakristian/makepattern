@@ -7,6 +7,8 @@ export default function ImageEditor() {
   const [angle, setAngle] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dataURL, setDataURL] = useState("");
+  const [imageWidth, setImageWidth] = useState(0);
+  const [imageHeight, setImageHeight] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -36,60 +38,23 @@ export default function ImageEditor() {
     img.src = image;
     img.onload = () => {
       context.drawImage(img, 0, 0);
+      context.strokeStyle = "red";
+      context.rect(offset.x, offset.y, size, size);
+      // context.clearRect(0, 0, canvas.width, canvas.height);
+      context.stroke();
     };
 
-    function rotatePointClockwise(
-      x: number,
-      y: number,
-      cx: number,
-      cy: number,
-      angleDegrees: number
-    ) {
-      // Convert the angle from degrees to radians
-      const angleRadians = angleDegrees * (Math.PI / 180);
-
-      // Translate the point to the origin
-      const translatedX = x - cx;
-      const translatedY = y - cy;
-
-      // Apply the rotation
-      const rotatedX =
-        translatedX * Math.cos(angleRadians) +
-        translatedY * Math.sin(angleRadians);
-      const rotatedY =
-        -translatedX * Math.sin(angleRadians) +
-        translatedY * Math.cos(angleRadians);
-
-      // Translate the point back to its original position
-      const finalX = rotatedX + cx;
-      const finalY = rotatedY + cy;
-
-      // Return the rotated coordinates as an object
-      return { x: finalX, y: finalY };
-    }
-    const x1 = offset.x;
-    const y1 = offset.y;
-    const x2 = offset.x + size;
-    const y2 = offset.y + size;
-
-    const centerX = (x1 + x2) / 2;
-    const centerY = (y1 + y2) / 2;
-
-    const p1 = rotatePointClockwise(x1, y1, centerX, centerY, angle);
-    const p2 = rotatePointClockwise(x2, y1, centerX, centerY, angle);
-    const p3 = rotatePointClockwise(x2, y2, centerX, centerY, angle);
-    const p4 = rotatePointClockwise(x1, y2, centerX, centerY, angle);
-
-    bufferContext.beginPath();
-    bufferContext.moveTo(p1.x, p1.y);
-    bufferContext.lineTo(p2.x, p2.y);
-    bufferContext.lineTo(p3.x, p3.y);
-    bufferContext.lineTo(p4.x, p4.y);
-    bufferContext.closePath();
-    bufferContext.stroke();
-    bufferContext.clip();
-
-    bufferContext.drawImage(canvas, 0, 0, size, size);
+    bufferContext.drawImage(
+      img,
+      offset.x,
+      offset.y,
+      size,
+      size,
+      0,
+      0,
+      size,
+      size
+    );
 
     const dataURL = buffer.toDataURL();
     setDataURL(dataURL);
@@ -104,15 +69,11 @@ export default function ImageEditor() {
       const imgWidth = img.width;
       const imgHeight = img.height;
 
-      const canvasWidth = canvas.offsetWidth;
-      const canvasHeight = canvas.offsetHeight;
-      const ratio = Math.min(canvasWidth / imgWidth, canvasHeight / imgHeight);
-      const center = { x: canvasWidth / 2, y: canvasHeight / 2 };
-      setOffset({
-        x: center.x - (imgWidth * ratio) / 2,
-        y: center.y - (imgHeight * ratio) / 2,
-      });
-      setScale(ratio);
+      setImageWidth(imgWidth);
+      setImageHeight(imgHeight);
+
+      canvas.width = Math.min(imgWidth, 500);
+      canvas.height = Math.min(imgHeight, 500);
     };
   }, [image]);
 
@@ -130,8 +91,15 @@ export default function ImageEditor() {
       const offsetX = clientX - startX;
       const offsetY = clientY - startY;
 
-      setOffset({ x: offsetX, y: offsetY });
+      const size = 100 * scale;
+      const offset = {
+        x: Math.max(0, Math.min(offsetX, canvasRef.current!.width - size)),
+        y: Math.max(0, Math.min(offsetY, canvasRef.current!.height - size)),
+      };
+
+      setOffset(offset);
     };
+
     const handleMouseUp = () => {
       canvasRef.current?.removeEventListener("mousemove", handleMouseMove);
       canvasRef.current?.removeEventListener("mouseup", handleMouseUp);
