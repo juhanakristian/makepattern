@@ -11,6 +11,7 @@ export default function ImageEditor() {
   const [imageHeight, setImageHeight] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const uiRef = useRef<HTMLCanvasElement | null>(null);
 
   const loadImage = (file: File) => {
     const reader = new FileReader();
@@ -33,16 +34,24 @@ export default function ImageEditor() {
     buffer.height = size;
     const bufferContext = buffer.getContext("2d");
     if (!bufferContext) return;
+    if (!uiRef.current) return;
+    const ui = uiRef.current;
+    ui.width = canvas.width;
+    ui.height = canvas.height;
+    const uiContext = ui.getContext("2d");
+    if (!uiContext) return;
 
     const img = new Image();
     img.src = image;
     img.onload = () => {
       context.drawImage(img, 0, 0);
-      context.strokeStyle = "red";
-      context.rect(offset.x, offset.y, size, size);
-      // context.clearRect(0, 0, canvas.width, canvas.height);
-      context.stroke();
     };
+
+    uiContext.strokeStyle = "red";
+    uiContext.beginPath();
+    uiContext.rect(offset.x, offset.y, size, size);
+    // context.clearRect(0, 0, canvas.width, canvas.height);
+    uiContext.stroke();
 
     bufferContext.drawImage(
       img,
@@ -128,6 +137,10 @@ export default function ImageEditor() {
             className="w-full"
             ref={canvasRef}
             onMouseDown={handleMouseDown}
+          />
+          <canvas
+            className="absolute top-0 w-full pointer-events-none"
+            ref={uiRef}
           />
         </div>
         <div className="p-2 flex flex-col gap-2">
