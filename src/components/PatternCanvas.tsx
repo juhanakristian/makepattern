@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import Slider from "./Slider";
+import { createFourWayReflectionTiling } from "../tiling/fourway";
 
 export default function ImageEditor() {
   const [image, setImage] = useState<string | null>(null);
@@ -65,7 +66,8 @@ export default function ImageEditor() {
       size
     );
 
-    const dataURL = buffer.toDataURL();
+    const dataURL = createFourWayReflectionTiling(buffer);
+    // const dataURL = buffer.toDataURL();
     setDataURL(dataURL);
   }, [image, scale, angle, offset]);
 
