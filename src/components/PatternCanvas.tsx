@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import Slider from "./Slider";
 import { createFourWayReflectionTiling } from "../tiling/fourway";
+import { createDiamondTiling } from "../tiling/diamond";
 
 export default function ImageEditor() {
   const [image, setImage] = useState<string | null>(null);
@@ -66,7 +67,8 @@ export default function ImageEditor() {
       size
     );
 
-    const dataURL = createFourWayReflectionTiling(buffer);
+    // const dataURL = createFourWayReflectionTiling(buffer);
+    const dataURL = createDiamondTiling(buffer);
     // const dataURL = buffer.toDataURL();
     setDataURL(dataURL);
   }, [image, scale, angle, offset]);
@@ -146,6 +148,10 @@ export default function ImageEditor() {
           />
         </div>
         <div className="p-2 flex flex-col gap-2">
+          <select className="w-full">
+            <option value="four-way">Four-way reflection</option>
+            <option value="diamond">Diamond</option>
+          </select>
           <Slider
             label="Rotation"
             range={[0, 360]}
