@@ -2,15 +2,20 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import Slider from "./Slider";
 import { createFourWayReflectionTiling } from "../tiling/fourway";
 import { createDiamondTiling } from "../tiling/diamond";
+import { createFascadeTiling } from "../tiling/fascade";
 
+
+type PatternType = "four-way" | "diamond" | "fascade";
 export default function ImageEditor() {
   const [image, setImage] = useState<string | null>(null);
   const [scale, setScale] = useState(1);
   const [angle, setAngle] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dataURL, setDataURL] = useState("");
-  const [imageWidth, setImageWidth] = useState(0);
-  const [imageHeight, setImageHeight] = useState(0);
+
+  const [patternType, setPatternType] = useState<PatternType>(
+    "fascade"
+  );
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const uiRef = useRef<HTMLCanvasElement | null>(null);
@@ -68,9 +73,18 @@ export default function ImageEditor() {
     );
 
     // const dataURL = createFourWayReflectionTiling(buffer);
-    const dataURL = createDiamondTiling(buffer);
+    if (patternType === "four-way") {
+      const dataURL = createFourWayReflectionTiling(buffer);
+      setDataURL(dataURL);
+      // const dataURL = createDiamondTiling(buffer);
+    } else if (patternType === "diamond") {
+      const dataURL = createDiamondTiling(buffer);
+      setDataURL(dataURL);
+    } else if (patternType === "fascade") {
+      const dataURL = createFascadeTiling(buffer);
+      setDataURL(dataURL);
+    }
     // const dataURL = buffer.toDataURL();
-    setDataURL(dataURL);
   }, [image, scale, angle, offset]);
 
   useEffect(() => {
@@ -82,8 +96,6 @@ export default function ImageEditor() {
       const imgWidth = img.width;
       const imgHeight = img.height;
 
-      setImageWidth(imgWidth);
-      setImageHeight(imgHeight);
 
       canvas.width = Math.min(imgWidth, 500);
       canvas.height = Math.min(imgHeight, 500);
@@ -148,9 +160,14 @@ export default function ImageEditor() {
           />
         </div>
         <div className="p-2 flex flex-col gap-2">
-          <select className="w-full">
+          <select
+            className="w-full border-2 border-gray-100 rounded-md p-2"
+            value={patternType}
+            onChange={(e) => setPatternType(e.target?.value!)}
+          >
             <option value="four-way">Four-way reflection</option>
             <option value="diamond">Diamond</option>
+            <option value="fascade">Fascade</option>
           </select>
           <Slider
             label="Rotation"

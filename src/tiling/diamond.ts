@@ -25,11 +25,11 @@ export function createDiamondTiling(sourceCanvas: HTMLCanvasElement): string {
   destinationCtx.save();
   destinationCtx.beginPath();
   destinationCtx.moveTo(0, 0);
-  destinationCtx.lineTo(quadrantSize, 0);
-  destinationCtx.lineTo(0, quadrantSize);
+  destinationCtx.lineTo(imageSize, 0);
+  destinationCtx.lineTo(quadrantSize, quadrantSize);
   destinationCtx.closePath();
   destinationCtx.clip();
-  destinationCtx.drawImage(sourceCanvas, 0, 0, quadrantSize, quadrantSize);
+  destinationCtx.drawImage(sourceCanvas, 0, 0, imageSize, quadrantSize);
   destinationCtx.restore();
 
   // Draw the top-right triangle quadrant
@@ -37,9 +37,9 @@ export function createDiamondTiling(sourceCanvas: HTMLCanvasElement): string {
   destinationCtx.translate(quadrantSize, 0);
   destinationCtx.scale(-1, 1);
   destinationCtx.beginPath();
-  destinationCtx.moveTo(0, 0);
+  destinationCtx.moveTo(0, quadrantSize);
+  destinationCtx.lineTo(quadrantSize, quadrantSize);
   destinationCtx.lineTo(quadrantSize, 0);
-  destinationCtx.lineTo(0, quadrantSize);
   destinationCtx.closePath();
   destinationCtx.clip();
   destinationCtx.drawImage(sourceCanvas, 0, 0, quadrantSize, quadrantSize);
