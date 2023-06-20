@@ -2,16 +2,18 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import ImageIcon from "../assets/ImageIcon";
 
 type Props = {
+  label: string;
   onChange: (e: any) => void
 }
 
-export default function FileInput({ onChange }: Props) {
+export default function FileInput({ label, onChange }: Props) {
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <>
-      <button className="bg-transparent" onClick={() => inputRef.current?.click()}>
+      <label hidden htmlFor="image">{label}</label>
+      <button name="image" className="p-2 rounded-full hover:bg-gray-100" onClick={() => inputRef.current?.click()}>
         <ImageIcon />
       </button>
       <input

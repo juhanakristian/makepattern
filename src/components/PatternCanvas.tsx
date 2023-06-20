@@ -4,6 +4,7 @@ import { createFourWayReflectionTiling } from "../tiling/fourway";
 import { createDiamondTiling } from "../tiling/diamond";
 import { createFascadeTiling } from "../tiling/fascade";
 import FileInput from "./FileInput";
+import DownloadIcon from "../assets/DownloadIcon";
 
 
 type PatternType = "four-way" | "diamond" | "fascade";
@@ -135,6 +136,9 @@ export default function ImageEditor() {
     canvasRef.current?.addEventListener("mouseup", handleMouseUp);
   };
 
+
+  const fileURL = dataURL.replace("image/png", "image/octet-stream");
+
   return (
     <div
       id="background"
@@ -144,8 +148,14 @@ export default function ImageEditor() {
       }}
     >
       <div className="w-96  rounded-xl p-2 bg-white shadow-md">
-        <FileInput
-          onChange={handleImageUpload} />
+        <div className="flex justify-between">
+          <FileInput
+            label="Choose image"
+            onChange={handleImageUpload} />
+          <a className="p-2 rounded-full hover:bg-gray-100" href={fileURL} download="pattern.png">
+            <DownloadIcon />
+          </a>
+        </div>
         <div style={{ position: "relative" }}>
           <canvas
             className="w-full"
