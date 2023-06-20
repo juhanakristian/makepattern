@@ -3,6 +3,7 @@ import Slider from "./Slider";
 import { createFourWayReflectionTiling } from "../tiling/fourway";
 import { createDiamondTiling } from "../tiling/diamond";
 import { createFascadeTiling } from "../tiling/fascade";
+import FileInput from "./FileInput";
 
 
 type PatternType = "four-way" | "diamond" | "fascade";
@@ -42,6 +43,7 @@ export default function ImageEditor() {
     const bufferContext = buffer.getContext("2d");
     if (!bufferContext) return;
     if (!uiRef.current) return;
+
     const ui = uiRef.current;
     ui.width = canvas.width;
     ui.height = canvas.height;
@@ -142,12 +144,8 @@ export default function ImageEditor() {
       }}
     >
       <div className="w-96  rounded-xl p-2 bg-white shadow-md">
-        <input
-          className=""
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-        />
+        <FileInput
+          onChange={handleImageUpload} />
         <div style={{ position: "relative" }}>
           <canvas
             className="w-full"
@@ -160,22 +158,6 @@ export default function ImageEditor() {
           />
         </div>
         <div className="p-2 flex flex-col gap-2">
-          <select
-            className="w-full border-2 border-gray-100 rounded-md p-2"
-            value={patternType}
-            onChange={(e) => setPatternType(e.target?.value!)}
-          >
-            <option value="four-way">Four-way reflection</option>
-            <option value="diamond">Diamond</option>
-            <option value="fascade">Fascade</option>
-          </select>
-          <Slider
-            label="Rotation"
-            range={[0, 360]}
-            step={1}
-            value={angle}
-            onChange={(value) => setAngle(value)}
-          />
           <Slider
             label="Scale"
             range={[0.1, 4]}
