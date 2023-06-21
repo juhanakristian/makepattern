@@ -57,8 +57,11 @@ export default function ImageEditor() {
       context.drawImage(img, 0, 0);
     };
 
-    uiContext.strokeStyle = "red";
+    uiContext.strokeStyle = "#ffffffaa";
+    uiContext.fillStyle = "#00000066";
+    uiContext.lineWidth = 1;
     uiContext.beginPath();
+    uiContext.fillRect(offset.x, offset.y, size, size);
     uiContext.rect(offset.x, offset.y, size, size);
     // context.clearRect(0, 0, canvas.width, canvas.height);
     uiContext.stroke();
