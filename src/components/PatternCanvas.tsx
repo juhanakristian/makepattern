@@ -17,6 +17,7 @@ type PatternType = "four-way" | "diamond" | "fascade";
 export default function ImageEditor() {
   const [image, setImage] = useState<string | null>(null);
   const [scale, setScale] = useState(1);
+  const [imageScale, setImageScale] = useState(1);
   const [angle, setAngle] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dataURL, setDataURL] = useState("");
@@ -58,7 +59,10 @@ export default function ImageEditor() {
     const img = new Image();
     img.src = image;
     img.onload = () => {
+      context.save();
+      context.scale(imageScale, imageScale);
       context.drawImage(img, 0, 0);
+      context.restore();
     };
 
     uiContext.strokeStyle = "#ffffffaa";
@@ -106,8 +110,13 @@ export default function ImageEditor() {
       const imgWidth = img.width;
       const imgHeight = img.height;
 
-      canvas.width = Math.min(imgWidth, 500);
-      canvas.height = Math.min(imgHeight, 500);
+      const width = Math.min(imgWidth, 500);
+      const scale = width / imgWidth;
+      const height = imgHeight * scale;
+
+      canvas.width = width;
+      canvas.height = height;
+      setImageScale(scale);
     };
   }, [image]);
 
@@ -118,7 +127,7 @@ export default function ImageEditor() {
     if (!canvasRef.current) return;
 
     // The initial position of the mouse.
-    let lastPos = getCanvasOffset(canvasRef.current, e);
+    const lastPos = getCanvasOffset(canvasRef.current, e);
     const initialOffset = { ...offset };
     const startPos = { ...lastPos };
 
@@ -170,7 +179,7 @@ export default function ImageEditor() {
         "--bg-image": `url('${dataURL}')`,
       }}
     >
-      <div className=" rounded-xl p-2 bg-white shadow-md">
+      <div className="rounded-xl p-2 bg-white shadow-md">
         <div className="flex justify-between">
           <FileInput label="Choose image" onChange={handleImageUpload} />
           <a
