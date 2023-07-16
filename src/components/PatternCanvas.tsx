@@ -27,6 +27,26 @@ export default function ImageEditor() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const uiRef = useRef<HTMLCanvasElement | null>(null);
 
+  useEffect(() => {
+    async function defaultImage() {
+      const data = await fetch("leaves.webp").then((res) => res.blob());
+
+      const metadata = {
+        type: "image/webp",
+      };
+      const file = new File([data], "leaves.webp", metadata);
+      // Load the default image.
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        setImage(e.target?.result as string);
+        setScale(0.5);
+      };
+      reader.readAsDataURL(file);
+    }
+    defaultImage();
+  }, []);
+
   const loadImage = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -34,6 +54,16 @@ export default function ImageEditor() {
     };
     reader.readAsDataURL(file);
   };
+
+  useEffect(() => {
+    // Load the default image.
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      setImage(e.target?.result as string);
+    };
+    reader.readAsDataURL(new File([new Uint8Array(0)], "default.png"));
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -78,8 +108,8 @@ export default function ImageEditor() {
       img,
       offset.x,
       offset.y,
-      size,
-      size,
+      size * (1 - imageScale),
+      size * (1 - imageScale),
       0,
       0,
       size,
