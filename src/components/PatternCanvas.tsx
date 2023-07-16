@@ -40,7 +40,6 @@ export default function ImageEditor() {
 
       reader.onload = (e) => {
         setImage(e.target?.result as string);
-        setScale(0.5);
       };
       reader.readAsDataURL(file);
     }
@@ -101,26 +100,24 @@ export default function ImageEditor() {
     uiContext.beginPath();
     uiContext.fillRect(offset.x, offset.y, size, size);
     uiContext.rect(offset.x, offset.y, size, size);
-    // context.clearRect(0, 0, canvas.width, canvas.height);
     uiContext.stroke();
 
+    console.log("imageScale", imageScale);
     bufferContext.drawImage(
       img,
-      offset.x,
-      offset.y,
-      size * (1 - imageScale),
-      size * (1 - imageScale),
+      offset.x * (1 / imageScale),
+      offset.y * (1 / imageScale),
+      size * (1 / imageScale),
+      size * (1 / imageScale),
       0,
       0,
       size,
       size
     );
 
-    // const dataURL = createFourWayReflectionTiling(buffer);
     if (patternType === "four-way") {
       const dataURL = createFourWayReflectionTiling(buffer);
       setDataURL(dataURL);
-      // const dataURL = createDiamondTiling(buffer);
     } else if (patternType === "diamond") {
       const dataURL = createDiamondTiling(buffer);
       setDataURL(dataURL);
@@ -128,7 +125,6 @@ export default function ImageEditor() {
       const dataURL = createFascadeTiling(buffer);
       setDataURL(dataURL);
     }
-    // const dataURL = buffer.toDataURL();
   }, [image, scale, angle, offset]);
 
   useEffect(() => {
@@ -210,8 +206,9 @@ export default function ImageEditor() {
       }}
     >
       <div className="rounded-xl p-2 bg-white shadow-md">
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <FileInput label="Choose image" onChange={handleImageUpload} />
+          <h1 className="text-lg font-600">makepattern.io</h1>
           <a
             className="p-2 rounded-full hover:bg-gray-100"
             href={fileURL}
@@ -221,11 +218,7 @@ export default function ImageEditor() {
           </a>
         </div>
         <div style={{ position: "relative" }}>
-          <canvas
-            // className="w-full"
-            ref={canvasRef}
-            onMouseDown={handleMouseDown}
-          />
+          <canvas ref={canvasRef} onMouseDown={handleMouseDown} />
           <canvas className="absolute top-0 pointer-events-none" ref={uiRef} />
         </div>
         <div className="p-2 flex flex-col gap-2">
