@@ -14,6 +14,7 @@ const getCanvasOffset = (canvas: HTMLCanvasElement, e: MouseEvent) => {
 };
 
 type PatternType = "four-way" | "diamond" | "fascade";
+
 export default function ImageEditor() {
   const [image, setImage] = useState<string | null>(null);
   const [scale, setScale] = useState(1);
@@ -223,7 +224,7 @@ export default function ImageEditor() {
         </div>
         <div className="p-2 flex flex-col gap-2">
           <Slider
-            label="Scale"
+            label="Size"
             range={[0.1, 4]}
             step={0.01}
             value={scale}
