@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import Slider from "./Slider";
-import { createFourWayReflectionTiling } from "../tiling/fourway";
-import { createDiamondTiling } from "../tiling/diamond";
 import { createFascadeTiling } from "../tiling/fascade";
 import FileInput from "./FileInput";
 import DownloadIcon from "../assets/DownloadIcon";
@@ -13,8 +11,6 @@ const getCanvasOffset = (canvas: HTMLCanvasElement, e: MouseEvent) => {
   return { x, y };
 };
 
-type PatternType = "four-way" | "diamond" | "fascade";
-
 export default function ImageEditor() {
   const [image, setImage] = useState<string | null>(null);
   const [scale, setScale] = useState(0.5);
@@ -22,8 +18,6 @@ export default function ImageEditor() {
   const [angle, setAngle] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dataURL, setDataURL] = useState("");
-
-  const [patternType, setPatternType] = useState<PatternType>("fascade");
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const uiRef = useRef<HTMLCanvasElement | null>(null);
@@ -122,16 +116,8 @@ export default function ImageEditor() {
       size
     );
 
-    if (patternType === "four-way") {
-      const dataURL = createFourWayReflectionTiling(buffer);
-      setDataURL(dataURL);
-    } else if (patternType === "diamond") {
-      const dataURL = createDiamondTiling(buffer);
-      setDataURL(dataURL);
-    } else if (patternType === "fascade") {
-      const dataURL = createFascadeTiling(buffer);
-      setDataURL(dataURL);
-    }
+    const dataURL = createFascadeTiling(buffer);
+    setDataURL(dataURL);
   }, [image, scale, angle, offset]);
 
   useEffect(() => {

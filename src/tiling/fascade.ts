@@ -1,11 +1,11 @@
 export function createFascadeTiling(sourceCanvas: HTMLCanvasElement): string {
   // Create a temporary canvas element
-  const destinationCanvas = document.createElement('canvas');
-  const destinationCtx = destinationCanvas.getContext('2d');
+  const destinationCanvas = document.createElement("canvas");
+  const destinationCtx = destinationCanvas.getContext("2d");
 
   // Check if the destination context is null
   if (!destinationCtx) {
-    throw new Error('Failed to create 2D rendering context.');
+    throw new Error("Failed to create 2D rendering context.");
   }
 
   // Define the size of the source image
@@ -31,7 +31,6 @@ export function createFascadeTiling(sourceCanvas: HTMLCanvasElement): string {
     const destinationOffsetX = i % 2 === 0 ? 0 : quadrantSize;
     const destinationOffsetY = i < 2 ? 0 : quadrantSize;
 
-
     // Draw the mirrored quadrant on the destination canvas
     destinationCtx.save();
     destinationCtx.scale(scaleX, scaleY);
@@ -49,11 +48,9 @@ export function createFascadeTiling(sourceCanvas: HTMLCanvasElement): string {
     destinationCtx.restore();
   }
 
-
   // Generate a Data URL for the tiling image
   const dataURL = destinationCanvas.toDataURL();
 
   // Return the Data URL
   return dataURL;
 }
-
