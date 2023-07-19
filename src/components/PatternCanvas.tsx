@@ -17,7 +17,7 @@ type PatternType = "four-way" | "diamond" | "fascade";
 
 export default function ImageEditor() {
   const [image, setImage] = useState<string | null>(null);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(0.5);
   const [imageScale, setImageScale] = useState(1);
   const [angle, setAngle] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -41,6 +41,10 @@ export default function ImageEditor() {
 
       reader.onload = (e) => {
         setImage(e.target?.result as string);
+        // Hack to refresh the canvas.
+        setTimeout(() => {
+          setScale(1);
+        }, 10);
       };
       reader.readAsDataURL(file);
     }
@@ -66,6 +70,7 @@ export default function ImageEditor() {
   }, []);
 
   useEffect(() => {
+    console.log("image");
     const canvas = canvasRef.current;
     if (!canvas || !image) return;
     const context = canvas.getContext("2d");
@@ -85,6 +90,7 @@ export default function ImageEditor() {
     ui.height = canvas.height;
     const uiContext = ui.getContext("2d");
     if (!uiContext) return;
+    if (!image || image.length < 10) return;
 
     const img = new Image();
     img.src = image;
@@ -131,6 +137,7 @@ export default function ImageEditor() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !image) return;
+    if (!image || image.length < 10) return;
     const img = new Image();
     img.src = image;
     img.onload = () => {
@@ -203,7 +210,8 @@ export default function ImageEditor() {
       id="background"
       className="w-full h-full flex justify-center items-center"
       style={{
-        "--bg-image": `url('${dataURL}')`,
+        "--bg-image":
+          dataURL && dataURL.length > 0 ? `url('${dataURL}')` : undefined,
       }}
     >
       <div className="rounded-xl p-2 bg-white shadow-md">
