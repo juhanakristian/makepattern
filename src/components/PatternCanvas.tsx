@@ -217,7 +217,7 @@ export default function ImageEditor() {
       <div className="rounded-xl p-2 bg-white shadow-md">
         <div className="flex justify-between items-center">
           <FileInput label="Choose image" onChange={handleImageUpload} />
-          <h1 className="text-lg font-600">makepattern.io</h1>
+          <h1 className="text-lg font-600">makepattern.xyz</h1>
           <a
             className="p-2 rounded-full hover:bg-gray-100"
             href={fileURL}
